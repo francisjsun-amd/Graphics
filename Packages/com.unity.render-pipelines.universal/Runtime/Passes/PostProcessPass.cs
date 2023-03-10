@@ -606,7 +606,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                         cmd.SetRenderTarget(new RenderTargetIdentifier(m_Source, 0, CubemapFace.Unknown, -1),
                             colorLoadAction, RenderBufferStoreAction.Store, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.DontCare);
 
-                        scaleBias = new Vector4(1, 1, 0, 0);;
+                        scaleBias = new Vector4(1, 1, 0, 0); ;
                         cmd.SetGlobalVector(ShaderPropertyId.scaleBias, scaleBias);
                         cmd.DrawProcedural(Matrix4x4.identity, m_BlitMaterial, 0, MeshTopology.Quads, 4, 1, null);
                     }
@@ -639,6 +639,8 @@ namespace UnityEngine.Rendering.Universal.Internal
 
                 if (m_UseSwapBuffer && !m_ResolveToScreen)
                 {
+                    var uRender = renderer as UniversalRenderer;
+                    uRender.fsr2TexColorID = uRender.activeCameraColorAttachment.id;
                     renderer.SwapColorBuffer(cmd);
                 }
 

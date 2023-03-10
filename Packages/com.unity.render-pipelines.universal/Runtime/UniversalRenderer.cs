@@ -34,11 +34,11 @@ namespace UnityEngine.Rendering.Universal
     /// </summary>
     public sealed class UniversalRenderer : ScriptableRenderer
     {
-        #if UNITY_SWITCH
+#if UNITY_SWITCH
         internal const int k_DepthStencilBufferBits = 24;
-        #else
+#else
         internal const int k_DepthStencilBufferBits = 32;
-        #endif
+#endif
         static readonly List<ShaderTagId> k_DepthNormalsOnly = new List<ShaderTagId> { new ShaderTagId("DepthNormalsOnly") };
 
         private static class Profiling
@@ -106,11 +106,13 @@ namespace UnityEngine.Rendering.Universal
 #endif
 
         internal RenderTargetBufferSystem m_ColorBufferSystem;
+        public RenderTargetHandle activeCameraColorAttachment { get { return m_ActiveCameraColorAttachment; } }
 
         RenderTargetHandle m_ActiveCameraColorAttachment;
         RenderTargetHandle m_ColorFrontBuffer;
         RenderTargetHandle m_ActiveCameraDepthAttachment;
         RenderTargetHandle m_CameraDepthAttachment;
+        public RenderTargetHandle depthTexture { get { return m_DepthTexture; } }
         RenderTargetHandle m_DepthTexture;
         RenderTargetHandle m_NormalsTexture;
         RenderTargetHandle m_OpaqueColor;
@@ -1218,9 +1220,11 @@ namespace UnityEngine.Rendering.Universal
             cmd.SetGlobalTexture("_AfterPostProcessTexture", m_ActiveCameraColorAttachment.id);
         }
 
+        public int fsr2TexColorID = -1;
         internal override RenderTargetIdentifier GetCameraColorFrontBuffer(CommandBuffer cmd)
         {
-            return m_ColorBufferSystem.GetFrontBuffer(cmd).id;
+            fsr2TexColorID = m_ColorBufferSystem.GetFrontBuffer(cmd).id;
+            return fsr2TexColorID;
         }
 
         internal override void EnableSwapBufferMSAA(bool enable)
