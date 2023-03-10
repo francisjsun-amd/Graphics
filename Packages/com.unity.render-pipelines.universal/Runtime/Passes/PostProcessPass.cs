@@ -144,6 +144,11 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public void Cleanup() => m_Materials.Cleanup();
 
+        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+        {
+            ConfigureInput(ScriptableRenderPassInput.Motion | ScriptableRenderPassInput.Color | ScriptableRenderPassInput.Depth);
+        }
+
         public void Setup(in RenderTextureDescriptor baseDescriptor, in RenderTargetHandle source, bool resolveToScreen, in RenderTargetHandle depth, in RenderTargetHandle internalLut, bool hasFinalPass, bool enableSRGBConversion, bool hasExternalPostPasses)
         {
             m_Descriptor = baseDescriptor;
@@ -1515,6 +1520,13 @@ namespace UnityEngine.Rendering.Universal.Internal
                                 cmd.SetGlobalTexture(ShaderPropertyId.sourceTex, ShaderConstants._UpscaledTexture);
                                 PostProcessUtils.SetSourceSize(cmd, upscaleRtDesc);
 
+                                break;
+                            }
+
+                            case ImageUpscalingFilter.FSR2:
+                            {
+                                if (cameraData.fsr2Output != null)
+                                    cmd.SetGlobalTexture(ShaderPropertyId.sourceTex, cameraData.fsr2Output);
                                 break;
                             }
                         }
